@@ -4,11 +4,13 @@ import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { environment } from '../environments/environment';
 import { RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet , CommonModule],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
@@ -19,7 +21,7 @@ export class AppComponent {
   userProfilePicture: string | null = null;
   userName: string | null = null;
 
-  constructor() {
+  constructor(private router: Router) {
     initializeApp(environment.firebase);
     this.loadUserData();
   }
@@ -62,7 +64,7 @@ export class AppComponent {
   }
 
   checkUserData(userId: string) {
-    fetch(`http://localhost:3000/users/${userId}`)
+    fetch(`${environment.apiUrl}/users/${userId}`)
       .then(response => {
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -73,8 +75,12 @@ export class AppComponent {
         console.log('User data:', data);
         if (data && Object.keys(data).length > 0) {
           console.log('Routing to user page');
+          this.router.navigate([``]);
+
         } else {
           console.log('Routing to new user page');
+          this.router.navigate([`new`]);
+
         }
       })
       .catch(error => {

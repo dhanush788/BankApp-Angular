@@ -1,1 +1,34 @@
-<p>disply-details works!</p>
+<div class="max-w-3xl mx-auto p-4 md:m-4 md:border rounded-lg md:shadow-lg bg-white">
+    <h3 class="text-xl font-bold mb-4">User Details</h3>
+    <p *ngIf="userData; else loading" class="text-gray-700">
+        <strong class="font-semibold">User ID:</strong> {{ userData.id }}<br>
+        <strong class="font-semibold">Issue Date:</strong> {{ userData.issue_date }}<br>
+        <strong class="font-semibold">Account Number:</strong> {{ userData.account_number }}<br>
+        <strong class="font-semibold">Interest Rate:</strong> {{ userData.interest_rate }}%<br>
+        <strong class="font-semibold">Tenure:</strong> {{ userData.tenure }} months
+    </p>
+    <ng-template #loading>
+        <p class="text-gray-500">Loading...</p>
+    </ng-template>
+
+    <h3 class="text-xl font-bold mb-4">Payment Details</h3>
+    <div *ngIf="paymentData && paymentData.length > 0; else noPayments" class="text-gray-700">
+        <div *ngFor="let payment of paymentData" class="border p-4 rounded-lg shadow-md mb-4 bg-gray-50">
+            <strong class="font-semibold">Payment ID:</strong> {{ payment.id }}<br>
+            <strong class="font-semibold">Amount:</strong> {{ payment.payment_amount }}<br>
+            <strong class="font-semibold">Date:</strong> {{ payment.payment_date }}<br>
+            <strong class="font-semibold">Status:</strong> {{ payment.status }}<br>
+            <button (click)="navigateToPayment(payment.id)"
+                class="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                Show Details
+            </button>
+        </div>
+    </div>
+    <ng-template #noPayments>
+        <p class="text-gray-500">No payment details available.</p>
+    </ng-template>
+
+    <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" (click)="navigateToAddPayment()">
+        New Payment
+    </button>
+</div>
