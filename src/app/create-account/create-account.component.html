@@ -1,32 +1,48 @@
-<form class="row g-3 needs-validation" [formGroup]="userForm">
-    <div class="col-md-4">
-        <label class="form-label">First name</label>
-        <input type="text" class="form-control" formControlName="firstName">
-        <div class="text-danger" *ngIf="userForm.controls['firstName'].invalid && (isFormSubmitted || userForm.controls['firstName'].touched || userForm.controls['firstName'].dirty)">
-           <span *ngIf="userForm.controls['firstName'].errors?.['required']">This Is Required</span>
+<form [formGroup]="userForm" class="space-y-4 p-5 max-w-4xl">
+    <h2 class="text-2xl font-bold text-gray-800">Add new loan details</h2>
+    <p class="text-gray-600">Fill in the form to add details</p>
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Account Number</label>
+        <input type="text" formControlName="account_number"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500">
+        <div *ngIf="userForm.controls['account_number'].invalid && (isFormSubmitted || userForm.controls['account_number'].touched || userForm.controls['account_number'].dirty)"
+            class="text-red-600">
+            <span *ngIf="userForm.controls['account_number'].errors?.['required']">This Is Required</span>
         </div>
     </div>
-    <div class="col-md-4">
-        <label class="form-label">Last name</label>
-        <input type="text" class="form-control"  formControlName="lastName">
-        <div class="text-danger" *ngIf="userForm.controls['lastName'].invalid   && (userForm.controls['lastName'].touched || userForm.controls['lastName'].dirty)">
-            <span *ngIf="userForm.controls['lastName'].errors?.['required']"> This IS Required </span>
-            <span *ngIf="userForm.controls['lastName'].errors?.['minlength']"> MIn 4 Charactors Required </span>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Interest Rate (%)</label>
+        <input type="number" formControlName="interest_rate"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500">
+        <div *ngIf="userForm.controls['interest_rate'].invalid && (isFormSubmitted || userForm.controls['interest_rate'].touched || userForm.controls['interest_rate'].dirty)"
+            class="text-red-600">
+            <span *ngIf="userForm.controls['interest_rate'].errors?.['required']">This Is Required</span>
         </div>
     </div>
-    <div class="col-md-4">
-        <label class="form-label">Username</label>
-        <div class="input-group has-validation">
-            <span class="input-group-text" id="inputGroupPrepend">&#64;</span>
-            <input type="text" class="form-control" formControlName="userName">
-        </div>
-        <div class="text-danger" *ngIf="userForm.controls['userName'].invalid  && (userForm.controls['userName'].touched || userForm.controls['userName'].dirty)">
-            <span *ngIf="userForm.controls['userName'].errors?.['required']"> This IS Required </span>
-            <span *ngIf="userForm.controls['userName'].errors?.['email']"> Email Is Not Proper </span>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700">Tenure (Years)</label>
+        <input type="number" formControlName="tenure"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500">
+        <div *ngIf="userForm.controls['tenure'].invalid && (isFormSubmitted || userForm.controls['tenure'].touched || userForm.controls['tenure'].dirty)"
+            class="text-red-600">
+            <span *ngIf="userForm.controls['tenure'].errors?.['required']">This Is Required</span>
         </div>
     </div>
-    
-    <div class="col-12">
-        <button class="btn btn-primary" type="button" (click)="onSubmit()">Submit form</button>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700">EMI Due</label>
+        <input type="number" formControlName="emi_due"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500">
+        <div *ngIf="userForm.controls['emi_due'].invalid && (isFormSubmitted || userForm.controls['emi_due'].touched || userForm.controls['emi_due'].dirty)"
+            class="text-red-600">
+            <span *ngIf="userForm.controls['emi_due'].errors?.['required']">This Is Required</span>
+        </div>
+    </div>
+
+    <div>
+        <button type="button" (click)="onSubmit()"
+            class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Submit form</button>
     </div>
 </form>

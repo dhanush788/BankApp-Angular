@@ -21,14 +21,12 @@ export class AppComponent {
 
   constructor() {
     initializeApp(environment.firebase);
+    this.loadUserData();
   }
 
   login() {
-    console.log("working");
-
     const auth = getAuth();
     const provider = new GoogleAuthProvider();
-    console.log("working");
 
     signInWithPopup(auth, provider)
       .then((result) => {
@@ -38,9 +36,49 @@ export class AppComponent {
         this.userProfile = user;
         this.userProfilePicture = user.photoURL;
         this.userName = user.displayName;
+
+        localStorage.setItem('userProfile', JSON.stringify({
+          uid: user.uid,
+          photoURL: user.photoURL,
+          displayName: user.displayName
+        }));
+
+        this.checkUserData(user.uid);
       })
       .catch((error) => {
         console.error('Error during sign-in:', error);
+      });
+  }
+
+  loadUserData() {
+    const userData = localStorage.getItem('userProfile');
+    if (userData) {
+      const user = JSON.parse(userData);
+      this.isLoggedIn = true;
+      this.userProfile = user;
+      this.userProfilePicture = user.photoURL;
+      this.userName = user.displayName;
+    }
+  }
+
+  checkUserData(userId: string) {
+    fetch(`http://localhost:3000/users/${userId}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('User data:', data);
+        if (data && Object.keys(data).length > 0) {
+          console.log('Routing to user page');
+        } else {
+          console.log('Routing to new user page');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching user data:', error);
       });
   }
 
