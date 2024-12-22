@@ -16,22 +16,10 @@ jobs:
 
       - name: Set up SSH Key
         run: |
-          # Create .ssh directory if it doesn't exist
           mkdir -p ~/.ssh
-          
-          # Save the private key to a file
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          
-          # Set the correct permissions for the private key
-          chmod 600 ~/.ssh/id_rsa
-          
-          # Log the permissions of the .ssh directory and private key
-          echo "Logging permissions of ~/.ssh directory:"
-          ls -ld ~/.ssh
-          ls -l ~/.ssh/id_rsa
-
-          # Log the fingerprint of the private key to ensure it's the right key
-          ssh-keygen -lf ~/.ssh/id_rsa || true
+          chmod 400 ~/.ssh/id_rsa
+          ssh-keygen -lf ~/.ssh/id_rsa || true  
 
       - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
@@ -52,6 +40,7 @@ jobs:
           script: |
             sudo yum -y update
             sudo yum install -y httpd
+            curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
             sudo yum install -y nodejs npm
             
             cd /home/ec2-user/angular-app
