@@ -10,6 +10,9 @@ interface PaymentData {
   payment_amount: number;
   payment_date: string;
   status: string;
+  payment_method: string;
+  tax_amount: number;
+  grand_total: number;
 }
 
 @Component({
@@ -36,6 +39,7 @@ export class DisplyPaymentDetailsComponent implements OnInit {
     this.http.get<PaymentData[]>(`${environment.apiUrl}/payments/${uid}`).subscribe(data => {
       this.paymentData = data.find(payment => payment.id.toString() === dynamicId) || null;
       this.isLoading = false;
+      console.log(this.paymentData)
     });
   }
 }

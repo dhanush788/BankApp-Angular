@@ -9,6 +9,30 @@
         </div>
     </div>
 
+    <div class="mb-4">
+        <label for="payment_method" class="block text-gray-700 text-sm font-bold mb-2">Payment Method:</label>
+        <select id="payment_method" formControlName="payment_method"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            <option value="" disabled>Select Payment Method</option>
+            <option value="credit_card">Credit Card</option>
+            <option value="paypal">PayPal</option>
+            <option value="bank_transfer">Bank Transfer</option>
+        </select>
+        <div *ngIf="userForm.get('payment_method')?.invalid && isFormSubmitted" class="text-red-500 text-xs mt-1">
+            Payment Method is required.
+        </div>
+    </div>
+
+    <div class="mb-4" *ngIf="userForm.get('tax_amount')?.value">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Tax Amount:</label>
+        <p class="text-gray-700 text-sm">{{ userForm.get('tax_amount')?.value | currency:'INR':'symbol':'1.2-2' }}</p>
+    </div>
+
+    <div class="mb-4" *ngIf="userForm.get('grand_total')?.value">
+        <label class="block text-gray-700 text-sm font-bold mb-2">Grand Total:</label>
+        <p class="text-gray-700 text-sm">{{ userForm.get('grand_total')?.value | currency:'INR':'symbol':'1.2-2' }}</p>
+    </div>
+
     <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
         Submit Payment
     </button>

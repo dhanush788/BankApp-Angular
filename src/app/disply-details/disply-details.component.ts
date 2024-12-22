@@ -20,6 +20,9 @@ interface PaymentData {
   payment_amount: number;
   payment_date: string;
   status: string;
+  payment_method: string;
+  tax_amount: number;
+  grand_total: number;
 }
 
 @Component({
