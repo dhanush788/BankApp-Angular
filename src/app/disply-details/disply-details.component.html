@@ -13,16 +13,31 @@
 
     <h3 class="text-xl font-bold mb-4">Payment Details</h3>
     <div *ngIf="paymentData && paymentData.length > 0; else noPayments" class="text-gray-700">
-        <div *ngFor="let payment of paymentData" class="border p-4 rounded-lg shadow-md mb-4 bg-gray-50">
-            <strong class="font-semibold">Payment ID:</strong> {{ payment.id }}<br>
-            <strong class="font-semibold">Amount:</strong> {{ payment.payment_amount }}<br>
-            <strong class="font-semibold">Date:</strong> {{ payment.payment_date }}<br>
-            <strong class="font-semibold">Status:</strong> {{ payment.status }}<br>
-            <button (click)="navigateToPayment(payment.id)"
-                class="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
-                Show Details
-            </button>
-        </div>
+        <table class="min-w-full border-collapse border border-gray-200">
+            <thead>
+                <tr>
+                    <th class="border border-gray-300 p-2">Payment ID</th>
+                    <th class="border border-gray-300 p-2">Amount</th>
+                    <th class="border border-gray-300 p-2">Date</th>
+                    <th class="border border-gray-300 p-2">Status</th>
+                    <th class="border border-gray-300 p-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let payment of paymentData">
+                    <td class="border border-gray-300 p-2">{{ payment.id }}</td>
+                    <td class="border border-gray-300 p-2">{{ payment.payment_amount }}</td>
+                    <td class="border border-gray-300 p-2">{{ payment.payment_date }}</td>
+                    <td class="border border-gray-300 p-2">{{ payment.status }}</td>
+                    <td class="border border-gray-300 p-2">
+                        <button (click)="navigateToPayment(payment.id)"
+                            class="mt-2 px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+                            Show Details
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <ng-template #noPayments>
         <p class="text-gray-500">No payment details available.</p>

@@ -34,16 +34,12 @@ export class CreateAccountComponent {
         .subscribe(
           response => {
             console.log('User created:', response);
-
-            if (isFormValid) {
-              this.router.navigate(['/dashboard']);
-            }
+            this.router.navigate(['/dashboard']);
           },
           error => {
             console.error('Error creating user:', error);
           }
         );
     }
-    console.log(this.userForm.value);
   }
 }
