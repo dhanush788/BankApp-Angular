@@ -9,6 +9,6 @@ export const environment = {
       appId: "1:102073387659:web:8d4bc8a72817635883e28e",
       measurementId: "G-D4KY81ELV0"
     },
-    apiUrl: 'http://localhost:3000'
+    apiUrl: 'http://13.53.49.118:3000'
   };
   

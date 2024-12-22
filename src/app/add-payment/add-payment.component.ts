@@ -71,7 +71,7 @@ export class AddPaymentComponent implements OnInit {
       console.log('Tax Amount:', taxAmount);
       console.log('Grand Total:', grandTotal);
 
-      this.http.post<PaymentResponse>('http://localhost:3000/payments/', this.userForm.value)
+      this.http.post<PaymentResponse>('http://13.53.49.118:3000/payments/', this.userForm.value)
         .subscribe(
           (response) => {
             console.log('Payment submitted successfully', response);
