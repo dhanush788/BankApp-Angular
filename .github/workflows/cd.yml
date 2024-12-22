@@ -39,7 +39,9 @@ jobs:
       # Add EC2 host to known hosts to prevent SSH prompt
       - name: Add EC2 to known hosts
         run: |
-          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts || echo "Failed to add EC2 host to known hosts"
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}        
 
       # Deploy to EC2
       - name: Deploy to EC2
