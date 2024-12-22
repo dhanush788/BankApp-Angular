@@ -3,14 +3,14 @@ name: Deploy Angular App to EC2
 on:
   push:
     branches:
-      - main
+      - main  # or whichever branch you want to deploy from
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout code
+      # Checkout the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -18,20 +18,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '18'  # specify your Node.js version
 
       # Install dependencies with legacy peer dependencies
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      # Build Angular app
+      # Build the Angular app
       - name: Build Angular App
         run: |
           npm run build --prod
-
-      # Debug EC2 Host
-      - name: Debug EC2 Host
-        run: echo "EC2_HOST: $EC2_HOST"
 
       # Set up SSH key
       - name: Set up SSH key
@@ -40,23 +36,21 @@ jobs:
           echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      # Add EC2 to known hosts
+      # Add EC2 host to known hosts to prevent SSH prompt
       - name: Add EC2 to known hosts
         run: |
-          ssh-keyscan -H $EC2_HOST -v >> ~/.ssh/known_hosts
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}  # Add your secret here
+          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
 
       # Deploy to EC2
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << 'EOF'
             cd /path/to/your/angular/app
-            git pull origin main
-            rm -rf dist
-            cp -r /path/to/your/angular/app/dist/* /var/www/html/
-            sudo systemctl restart nginx
+            git pull origin main  # Ensure your app is up-to-date
+            rm -rf dist  # Remove old build files
+            cp -r /path/to/your/angular/app/dist/* /var/www/html/  # Copy the new build to Nginx's root directory
+            sudo systemctl restart nginx  # Restart Nginx to serve the new app
           EOF
         env:
-          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # Your private SSH key stored in GitHub Secrets
+          EC2_HOST: ${{ secrets.EC2_HOST }}  # Your EC2 instance public IP or DNS stored in GitHub Secrets
