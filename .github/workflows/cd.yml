@@ -22,6 +22,7 @@ jobs:
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
           TARGET: "/home/ec2-user/BANK_APP"
+          RSYNC_OPTIONS: "-avz -e 'ssh -o StrictHostKeyChecking=no'"
 
       - name: Executing remote SSH commands
         uses: appleboy/ssh-action@master
