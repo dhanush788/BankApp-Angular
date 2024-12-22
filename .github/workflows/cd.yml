@@ -17,10 +17,11 @@ jobs:
       - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SOURCE: "./"
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: "/home/ec2-user/angular-app"
+          TARGET: "/home/ec2-user/BANK_APP"
 
       - name: Executing remote SSH commands
         uses: appleboy/ssh-action@master
