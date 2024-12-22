@@ -1,58 +1,45 @@
-name: Deploy Angular App to EC2
+name: Push-to-EC2 instance
 
 on:
   push:
     branches:
-      - main  # or whichever branch you want to deploy from
+      - main
 
 jobs:
   deploy:
+    name: Push to EC2
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Checkout the code
+        uses: actions/checkout@v1
 
-      # Set up Node.js
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
+      - name: Deploy to my EC2 instance
+        uses: easingthemes/ssh-deploy@v2.1.5
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SOURCE: "./"
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
+
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@master
         with:
-          node-version: '18'  # specify your Node.js version
-
-      # Install dependencies with legacy peer dependencies
-      - name: Install dependencies
-        run: npm install --legacy-peer-deps
-
-      # Build the Angular app
-      - name: Build Angular App
-        run: |
-          npm run build --prod
-
-      # Set up SSH key
-      - name: Set up SSH key
-        run: |
-          mkdir -p ~/.ssh
-          echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa.pem
-          chmod 600 ~/.ssh/id_rsa.pem
-
-      # Add EC2 to known hosts to prevent SSH prompt
-      - name: Add EC2 to known hosts
-        run: |
-          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts || echo "Failed to add EC2 host to known hosts"
-        env:
-          EC2_HOST: ${{ secrets.EC2_HOST }}  # EC2 public IP or DNS from GitHub secrets
-
-      # Deploy to EC2
-      - name: Deploy to EC2
-        run: |
-          ssh -i ~/.ssh/id_rsa.pem $EC2_HOST << EOF
-            cd /nav-task
-            git pull origin main
-            rm -rf dist
-            cp -r /nav-task/dist/* /var/www/html/
-            sudo systemctl restart nginx
-          EOF
-        env:
-          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # Your private SSH key stored in GitHub Secrets
-          EC2_HOST: ${{ secrets.EC2_HOST }}  # Your EC2 instance public IP or DNS stored in GitHub Secrets
+          host: ${{ secrets.HOST_DNS }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo yum -y update
+            sudo yum install -y httpd
+            sudo systemctl start httpd
+            sudo systemctl enable httpd
+            cd /home
+            ls
+            cd ec2-user
+            sudo yum install nodejs npm -y
+            sudo npm install -g @angular/cli
+            npm install
+            sudo ng build --prod
+            sudo cp -r dist/* /var/www/html
+            sudo systemctl restart httpd
