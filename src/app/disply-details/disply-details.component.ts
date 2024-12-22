@@ -10,6 +10,8 @@ interface UserData {
   account_number: string;
   interest_rate: number;
   tenure: number;
+  loan_amount: number;
+  months_to_repay: number;
 }
 
 interface PaymentData {
@@ -29,6 +31,7 @@ interface PaymentData {
 export class DisplyDetailsComponent implements OnInit {
   userData: UserData | null = null;
   paymentData: PaymentData[] | null = null;
+  monthlyPayment: boolean = false;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -60,6 +63,8 @@ export class DisplyDetailsComponent implements OnInit {
   getPaymentData(uid: string) {
     this.http.get<PaymentData[]>(`${environment.apiUrl}/payments/${uid}`).subscribe(data => {
       this.paymentData = data;
+      const currentMonth = new Date().getMonth();
+      this.monthlyPayment = !data.some(payment => new Date(payment.payment_date).getMonth() === currentMonth);
     });
   }
 

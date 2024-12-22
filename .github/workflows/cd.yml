@@ -40,6 +40,6 @@ jobs:
             sudo yum install nodejs npm -y
             sudo npm install -g @angular/cli
             npm install --legacy-peer-deps
-            sudo ng build --configuration production
-            sudo cp -r dist/* /var/www/html
+            sudo ng build
+            sudo cp -r dist/nav-task/browser/* /var/www/html
             sudo systemctl restart httpd
