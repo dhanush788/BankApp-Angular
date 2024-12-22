@@ -18,19 +18,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16' # specify your Node.js version
+          node-version: '18'  # specify your Node.js version
 
-      # Install dependencies
+      # Install dependencies with legacy peer dependencies
       - name: Install dependencies
-        run: |
-          npm install
-          
+        run: npm install --legacy-peer-deps
+
       # Build the Angular app
       - name: Build Angular App
         run: |
           npm run build --prod
 
-      # Copy SSH private key and set permissions
+      # Set up SSH key
       - name: Set up SSH key
         run: |
           mkdir -p ~/.ssh
@@ -54,6 +53,5 @@ jobs:
             sudo systemctl restart nginx
           EOF
         env:
-          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # The private SSH key stored in GitHub Secrets
-          EC2_HOST: ${{ secrets.EC2_HOST }}  # The EC2 instance public IP or hostname stored in GitHub Secrets
-
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # Your private SSH key stored in GitHub Secrets
+          EC2_HOST: ${{ secrets.EC2_HOST }}  # Your EC2 instance public IP or DNS stored in GitHub Secrets
