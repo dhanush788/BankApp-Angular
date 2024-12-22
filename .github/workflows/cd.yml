@@ -35,7 +35,7 @@ jobs:
           mkdir -p ~/.ssh
           echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa.pem
           chmod 400 ~/.ssh/id_rsa.pem
-          chown Dhanush:Dhanush ~/.ssh/id_rsa.pem
+          chown runner:runner ~/.ssh/id_rsa.pem
 
       # Add EC2 host to known hosts to prevent SSH prompt
       - name: Add EC2 to known hosts
