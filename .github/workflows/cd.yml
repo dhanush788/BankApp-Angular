@@ -21,7 +21,7 @@ jobs:
           SOURCE: "./"
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: "/home/ec2-user/BANK_APP"
+          TARGET: "/home/ec2-user"
           RSYNC_OPTIONS: "-avz -e 'ssh -o StrictHostKeyChecking=no' -vv"
 
       - name: Executing remote SSH commands
