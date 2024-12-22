@@ -34,7 +34,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
 
       # Add EC2 host to known hosts to prevent SSH prompt
       - name: Add EC2 to known hosts
@@ -49,11 +49,11 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ec2-user@$EC2_HOST <<EOF
-            cd /path/to/your/angular/app
-            git pull origin main  # Ensure your app is up-to-date
-            rm -rf dist  # Remove old build files
-            cp -r /path/to/your/angular/app/dist/* /var/www/html/  # Copy the new build to Nginx's root directory
-            sudo systemctl restart nginx  # Restart Nginx to serve the new app
+            cd /nav-task
+            git pull origin main  
+            rm -rf dist  
+            cp -r /nav-task/dist/* /var/www/html/  
+            sudo systemctl restart nginx  
           EOF
         env:
           EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # Your private SSH key stored in GitHub Secrets
