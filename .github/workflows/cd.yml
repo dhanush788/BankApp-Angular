@@ -1,4 +1,4 @@
-name: Push-to-EC2 instance
+name: CI/CD for EC2 via SSM
 
 on:
   push:
@@ -7,52 +7,29 @@ on:
 
 jobs:
   deploy:
-    name: Deploy Angular App to EC2
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout the code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up SSH Key
+      - name: Set up AWS CLI
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-          chmod 400 ~/.ssh/id_rsa
-          ssh-keygen -lf ~/.ssh/id_rsa || true  
+          curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
 
-      - name: Deploy to EC2 instance
-        uses: easingthemes/ssh-deploy@v2.1.5
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SOURCE: "./"
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: "/home/ec2-user"
-          RSYNC_OPTIONS: "-avz -e 'ssh -o StrictHostKeyChecking=no' -vv"
-
-      - name: Executing remote SSH commands
-        uses: appleboy/ssh-action@master
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          host: ${{ secrets.HOST_DNS }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            sudo yum -y update
-            sudo yum install -y httpd
-            curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
-            sudo yum install -y nodejs npm
-            
-            cd /home/ec2-user/angular-app
-            
-            npm ci
-            
-            npm run build --prod
-            
-            sudo rm -rf /var/www/html/*
-            sudo cp -r dist/* /var/www/html
-            
-            sudo systemctl start httpd
-            sudo systemctl enable httpd
-            
-            sudo systemctl restart httpd
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: "eu-north-1"
+
+      - name: Deploy via SSM
+        run: |
+          aws ssm send-command \
+            --document-name "AWS-RunShellScript" \
+            --targets "Key=instanceIds,Values=${{ secrets.INSTANCE_ID }}" \
+            --parameters 'commands=["cd /home/ec2-user/angular-app && git pull && npm install && npm run build --prod"]' \
+            --comment "Deploy Angular App"
