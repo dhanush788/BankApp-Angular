@@ -36,24 +36,22 @@ jobs:
           echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa.pem
           chmod 600 ~/.ssh/id_rsa.pem
 
-      # Add EC2 host to known hosts to prevent SSH prompt
+      # Add EC2 to known hosts to prevent SSH prompt
       - name: Add EC2 to known hosts
         run: |
           ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts || echo "Failed to add EC2 host to known hosts"
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}  # EC2 public IP or DNS from GitHub secrets
 
-
-
       # Deploy to EC2
       - name: Deploy to EC2
         run: |
-          ssh -i ~/.ssh/id_rsa.pem $EC2_HOST 
+          ssh -i ~/.ssh/id_rsa.pem $EC2_HOST << EOF
             cd /nav-task
-            git pull origin main  
-            rm -rf dist  
-            cp -r /nav-task/dist/* /var/www/html/  
-            sudo systemctl restart nginx  
+            git pull origin main
+            rm -rf dist
+            cp -r /nav-task/dist/* /var/www/html/
+            sudo systemctl restart nginx
           EOF
         env:
           EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # Your private SSH key stored in GitHub Secrets
