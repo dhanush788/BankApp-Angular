@@ -14,6 +14,13 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
 
+      - name: Set up SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keygen -lf ~/.ssh/id_rsa  # Log the fingerprint of the SSH key to verify permissions
+
       - name: Deploy to EC2 instance
         uses: easingthemes/ssh-deploy@v2.1.5
         env:
@@ -35,16 +42,16 @@ jobs:
             sudo yum install -y httpd
             sudo yum install -y nodejs npm
             
+            ls /home/ec2-user/
             cd /home/ec2-user/angular-app
-            
+
             npm ci
-            
             npm run build --prod
-            
+
             sudo rm -rf /var/www/html/*
             sudo cp -r dist/* /var/www/html
-            
+
             sudo systemctl start httpd
             sudo systemctl enable httpd
-            
+
             sudo systemctl restart httpd
