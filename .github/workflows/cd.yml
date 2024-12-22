@@ -1,35 +1,59 @@
-name: CI/CD for EC2 via SSM
+name: Deploy Angular App to EC2
 
 on:
   push:
     branches:
-      - main
+      - main  # or whichever branch you want to deploy from
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up AWS CLI
-        run: |
-          curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+      # Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: "eu-north-1"
+          node-version: '16' # specify your Node.js version
 
-      - name: Deploy via SSM
+      # Install dependencies
+      - name: Install dependencies
         run: |
-          aws ssm send-command \
-            --document-name "AWS-RunShellScript" \
-            --targets "Key=instanceIds,Values=${{ secrets.INSTANCE_ID }}" \
-            --parameters 'commands=["cd /home/ec2-user/angular-app && git pull && npm install && npm run build --prod"]' \
-            --comment "Deploy Angular App"
+          npm install
+          
+      # Build the Angular app
+      - name: Build Angular App
+        run: |
+          npm run build --prod
+
+      # Copy SSH private key and set permissions
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "$EC2_SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      # Add EC2 host to known hosts to prevent SSH prompt
+      - name: Add EC2 to known hosts
+        run: |
+          ssh-keyscan -H $EC2_HOST >> ~/.ssh/known_hosts
+
+      # Deploy to EC2
+      - name: Deploy to EC2
+        run: |
+          ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ec2-user@$EC2_HOST << 'EOF'
+            cd /path/to/your/angular/app
+            git pull origin main
+            rm -rf dist
+            cp -r /path/to/your/angular/app/dist/* /var/www/html/
+            # If using Nginx, restart Nginx to serve the updated app
+            sudo systemctl restart nginx
+          EOF
+        env:
+          EC2_SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # The private SSH key stored in GitHub Secrets
+          EC2_HOST: ${{ secrets.EC2_HOST }}  # The EC2 instance public IP or hostname stored in GitHub Secrets
+
