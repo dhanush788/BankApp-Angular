@@ -32,13 +32,28 @@
     </div>
 
     <div>
-        <label class="block text-sm font-medium text-gray-700">EMI Due</label>
+        <label class="block text-sm font-medium text-gray-700">Loan Amount</label>
+        <input type="number" formControlName="loan_amount"
+            class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500">
+        <div *ngIf="userForm.controls['loan_amount'].invalid && (isFormSubmitted || userForm.controls['loan_amount'].touched || userForm.controls['loan_amount'].dirty)"
+            class="text-red-600">
+            <span *ngIf="userForm.controls['loan_amount'].errors?.['required']">This Is Required</span>
+        </div>
+    </div>
+
+    <div>
+        <label class="block text-sm font-medium text-gray-700">EMI Due (Monthly Payment Amount)</label>
         <input type="number" formControlName="emi_due"
             class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500">
         <div *ngIf="userForm.controls['emi_due'].invalid && (isFormSubmitted || userForm.controls['emi_due'].touched || userForm.controls['emi_due'].dirty)"
             class="text-red-600">
             <span *ngIf="userForm.controls['emi_due'].errors?.['required']">This Is Required</span>
         </div>
+    </div>
+
+    <div *ngIf="monthsToRepay && monthsToRepay > 0">
+        <label class="block text-sm font-medium text-gray-700">Months to Repay</label>
+        <p class="mt-1 text-gray-800">{{ monthsToRepay }}</p>
     </div>
 
     <div>

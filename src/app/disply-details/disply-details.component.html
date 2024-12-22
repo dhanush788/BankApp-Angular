@@ -1,18 +1,26 @@
 <div class="max-w-3xl mx-auto p-4 md:m-4 md:border rounded-lg md:shadow-lg bg-white">
-    <h3 class="text-xl font-bold mb-4">User Details</h3>
-    <p *ngIf="userData; else loading" class="text-gray-700">
-        <strong class="font-semibold">User ID:</strong> {{ userData.id }}<br>
-        <strong class="font-semibold">Issue Date:</strong> {{ userData.issue_date }}<br>
-        <strong class="font-semibold">Account Number:</strong> {{ userData.account_number }}<br>
-        <strong class="font-semibold">Interest Rate:</strong> {{ userData.interest_rate }}%<br>
-        <strong class="font-semibold">Tenure:</strong> {{ userData.tenure }} months
+    <h3 class="text-xl font-bold">User Details</h3>
+    <p *ngIf="userData; else loading" class="text-gray-700 mt-2 mb-6">
+        <strong class="font-bold text-lg">User ID: </strong> <span class="text-blue-500">{{ userData.id }}</span><br>
+        <strong class="font-bold text-lg">Account Number: </strong> <span class="text-blue-500">{{
+            userData.account_number }}</span><br>
+        <strong class="font-bold text-lg">Total Loan Amount: </strong> <span class="text-green-500">{{
+            userData.loan_amount }}</span><br>
+        <strong class="font-bold text-lg">Interest Rate: </strong> <span class="text-red-500">{{ userData.interest_rate
+            }}%</span><br>
+        <strong class="font-bold text-lg">Tenure: </strong> <span class="text-blue-500">{{ userData.tenure }}
+            months</span><br>
+        <strong class="font-bold text-lg">Months to repay: </strong> <span class="text-blue-500">{{
+            userData.months_to_repay }} months</span><br>
+        <strong class="font-bold text-lg">Issue Date: </strong> <span class="text-blue-500">{{ userData.issue_date
+            }}</span>
     </p>
     <ng-template #loading>
         <p class="text-gray-500">Loading...</p>
     </ng-template>
 
     <h3 class="text-xl font-bold mb-4">Payment Details</h3>
-    <div *ngIf="paymentData && paymentData.length > 0; else noPayments" class="text-gray-700">
+    <div *ngIf="paymentData && paymentData.length > 0; else noPayments" class="text-gray-700 overflow-auto">
         <table class="min-w-full border-collapse border border-gray-200">
             <thead>
                 <tr>
@@ -43,7 +51,41 @@
         <p class="text-gray-500">No payment details available.</p>
     </ng-template>
 
+    <div *ngIf="!monthlyPayment" class="mt-4 p-2 border border-gray-300 rounded bg-yellow-100">
+        <p class="text-yellow-800 font-semibold">Payments have been made this month.</p>
+    </div>
+    <div *ngIf="monthlyPayment" class="mt-4 p-2 border border-gray-300 rounded bg-yellow-100">
+        <p class="text-yellow-800 font-semibold">No payments have been made this month.</p>
+    </div>
     <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600" (click)="navigateToAddPayment()">
         New Payment
     </button>
+
+
+    <h3 class="text-xl font-bold mt-8 mb-3">Payment Summary</h3>
+    <div *ngIf="paymentSummary.totalPaymentsMade" class="text-gray-700 my-4">
+        <p><strong>Total Payments Made: </strong> <span class="text-blue-500">{{ paymentSummary.totalPaymentsMade
+                }}</span>
+        </p>
+        <p><strong>Remaining Loan Balance: </strong> <span class="text-blue-500">{{ paymentSummary.remainingLoanBalance
+                }}</span></p>
+        <p><strong>Average Monthly Payment: </strong> <span class="text-blue-500">{{
+                paymentSummary.averageMonthlyPayment
+                }}</span></p>
+        <p><strong>Total Payments Count: </strong> <span class="text-blue-500">{{ paymentSummary.totalPaymentsCount
+                }}</span></p>
+        <p><strong>Last Payment Date: </strong> <span class="text-blue-500">{{ paymentSummary.lastPaymentDate }}</span>
+        </p>
+        <p><strong>Days Since Last Payment: </strong> <span class="text-blue-500">{{ paymentSummary.daysSinceLastPayment
+                }}</span></p>
+        <p><strong>Months Since Loan Issued: </strong> <span class="text-blue-500">{{
+                paymentSummary.monthsSinceLoanIssued
+                }}</span></p>
+        <p><strong>Total Payments: </strong> <span class="text-blue-500">{{
+                paymentSummary.paymentStatusSummary["SUCCESS"] | json }}</span></p>
+        <p><strong>Successful Payments: </strong> <span class="text-blue-500">{{
+                paymentSummary.paymentStatusSummary["SUCCESS"] | json }}</span></p>
+        <p><strong>Failed Payments: </strong> <span class="text-blue-500">{{
+                paymentSummary.paymentStatusSummary["FAILURE"] | json }}</span></p>
+    </div>
 </div>

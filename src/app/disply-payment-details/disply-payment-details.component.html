@@ -5,8 +5,11 @@
     <p class="text-lg text-gray-700">No payment data available.</p>
 </div>
 <div *ngIf="paymentData" class="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
-    <h2 class="text-2xl font-bold mb-4">Payment Details</h2>
-    <p class="text-lg text-gray-700">Amount: <span class="font-semibold">{{ paymentData.payment_amount }}</span></p>
-    <p class="text-lg text-gray-700">Status: <span class="font-semibold">{{ paymentData.status }}</span></p>
+    <h2 class="text-2xl font-bold mb-4 text-blue-600">Payment Details</h2>
+    <p class="text-lg text-gray-700">Amount: <span class="font-semibold ">{{ paymentData.payment_amount }}</span></p>
+    <p class="text-lg text-gray-700">Status: <span class="font-semibold ">{{ paymentData.status }}</span></p>
     <p class="text-lg text-gray-700">Date: <span class="font-semibold">{{ paymentData.payment_date }}</span></p>
+    <p class="text-lg text-gray-700">Payment Method: <span class="font-semibold ">{{ paymentData.payment_method}}</span></p>
+    <p class="text-lg text-gray-700">Tax Amount: <span class="font-semibold ">{{ paymentData.tax_amount }}</span></p>
+    <p class="text-lg text-gray-700">Grand Total: <span class="font-semibold ">{{ paymentData.grand_total }}</span></p>
 </div>

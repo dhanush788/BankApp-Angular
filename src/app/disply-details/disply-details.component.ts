@@ -10,6 +10,8 @@ interface UserData {
   account_number: string;
   interest_rate: number;
   tenure: number;
+  loan_amount: number;
+  months_to_repay: number;
 }
 
 interface PaymentData {
@@ -18,6 +20,20 @@ interface PaymentData {
   payment_amount: number;
   payment_date: string;
   status: string;
+  payment_method: string;
+  tax_amount: number;
+  grand_total: number;
+}
+
+interface PaymentSummary {
+  totalPaymentsMade: number;
+  remainingLoanBalance: number;
+  averageMonthlyPayment: number;
+  paymentStatusSummary: { [key: string]: number };
+  monthsSinceLoanIssued: number;
+  totalPaymentsCount: number;
+  lastPaymentDate: string;
+  daysSinceLastPayment: number;
 }
 
 @Component({
@@ -29,6 +45,8 @@ interface PaymentData {
 export class DisplyDetailsComponent implements OnInit {
   userData: UserData | null = null;
   paymentData: PaymentData[] | null = null;
+  monthlyPayment: boolean = false;
+  paymentSummary: PaymentSummary = {} as PaymentSummary;
 
   constructor(private http: HttpClient, private router: Router) { }
 
@@ -55,11 +73,38 @@ export class DisplyDetailsComponent implements OnInit {
       }
     });
   }
-  
 
   getPaymentData(uid: string) {
     this.http.get<PaymentData[]>(`${environment.apiUrl}/payments/${uid}`).subscribe(data => {
       this.paymentData = data;
+      const currentMonth = new Date().getMonth();
+      this.monthlyPayment = !data.some(payment => new Date(payment.payment_date).getMonth() === currentMonth);
+      const totalPaymentsMade = data.reduce((sum, payment) => sum + payment.payment_amount, 0);
+      const remainingLoanBalance = this.userData ? this.userData.loan_amount - totalPaymentsMade : 0;
+      const averageMonthlyPayment = data.length > 0 ? totalPaymentsMade / data.length : 0;
+
+      const totalPaymentsCount = data.length;
+      const lastPaymentDate = totalPaymentsCount > 0 ? new Date(Math.max(...data.map(payment => new Date(payment.payment_date).getTime()))) : null;
+      const daysSinceLastPayment = lastPaymentDate ? Math.floor((new Date().getTime() - lastPaymentDate.getTime()) / (1000 * 60 * 60 * 24)) : 0;
+
+      const paymentStatusSummary = data.reduce((summary: { [key: string]: number }, payment) => {
+        summary[payment.status] = (summary[payment.status] || 0) + 1;
+        return summary;
+      }, {});
+
+      const monthsSinceLoanIssued = this.userData ? Math.floor((new Date().getTime() - new Date(this.userData.issue_date).getTime()) / (1000 * 60 * 60 * 24 * 30)) : 0;
+
+      this.paymentSummary = {
+        totalPaymentsMade,
+        remainingLoanBalance,
+        averageMonthlyPayment,
+        paymentStatusSummary,
+        monthsSinceLoanIssued,
+        totalPaymentsCount,
+        lastPaymentDate: lastPaymentDate ? lastPaymentDate.toISOString().split('T')[0] : "No payments made",
+        daysSinceLastPayment
+      };
+
     });
   }
 
@@ -72,7 +117,7 @@ export class DisplyDetailsComponent implements OnInit {
     this.router.navigate([`payment/${paymentId}`]);
   }
 
-  navigateToAddPayment(){
+  navigateToAddPayment() {
     this.router.navigate([`addpayment`]);
   }
 }

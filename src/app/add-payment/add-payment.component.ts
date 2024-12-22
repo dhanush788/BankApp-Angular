@@ -7,6 +7,9 @@ import { Router } from '@angular/router';
 
 interface PaymentResponse {
   payment_id: string;
+  payment_method: string;
+  tax_amount: number;
+  grand_total: number;
 }
 
 @Component({
@@ -27,17 +30,48 @@ export class AddPaymentComponent implements OnInit {
     this.userForm = this.formBuilder.group({
       customer_id: [userId, Validators.required], // Ensure 'customer_id' is required
       payment_amount: ['', [Validators.required, Validators.min(1)]],
+      payment_method: ['', [Validators.required]],
+      tax_amount: ['',[Validators.required]],
+      grand_total: ['',[Validators.required]],
       status: ["SUCCESS"]
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.userForm.get('payment_amount')?.valueChanges.subscribe(paymentAmount => {
+      const parsedAmount = parseFloat(paymentAmount); 
+      const taxRate = 0.1;
+      const taxAmount = parsedAmount ? parsedAmount * taxRate : 0;
+      const grandTotal = parsedAmount ? parsedAmount + taxAmount : 0;
+
+      // Update the form values
+      this.userForm.patchValue({
+        tax_amount: taxAmount,
+        grand_total: grandTotal
+      }, { emitEvent: false }); 
+    });
+  }
 
   onSubmit(): void {
     this.isFormSubmitted = true;
 
     if (this.userForm.valid) {
-      this.http.post<PaymentResponse>('http://localhost:3000/payments/', this.userForm.value)
+      const paymentAmount = parseFloat(this.userForm.value.payment_amount);
+      const taxRate = 0.1;
+      const taxAmount = paymentAmount * taxRate;
+      const grandTotal = paymentAmount + taxAmount;
+
+      // Update the form values
+      this.userForm.patchValue({
+        tax_amount: taxAmount,
+        grand_total: grandTotal
+      });
+
+      // Log the values to check if they are being set correctly
+      console.log('Tax Amount:', taxAmount);
+      console.log('Grand Total:', grandTotal);
+
+      this.http.post<PaymentResponse>('http://13.53.49.118:3000/payments/', this.userForm.value)
         .subscribe(
           (response) => {
             console.log('Payment submitted successfully', response);
