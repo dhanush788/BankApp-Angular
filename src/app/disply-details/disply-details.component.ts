@@ -12,6 +12,7 @@ interface UserData {
   tenure: number;
   loan_amount: number;
   months_to_repay: number;
+  emi_due: number;
 }
 
 interface PaymentData {

@@ -4,12 +4,16 @@
 <div *ngIf="!isLoading && !paymentData" class="text-center">
     <p class="text-lg text-gray-700">No payment data available.</p>
 </div>
-<div *ngIf="paymentData" class="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
+<div *ngIf="paymentData && userData" class="max-w-md mx-auto bg-white shadow-md rounded-lg p-6">
     <h2 class="text-2xl font-bold mb-4 text-blue-600">Payment Details</h2>
-    <p class="text-lg text-gray-700">Amount: <span class="font-semibold ">{{ paymentData.payment_amount }}</span></p>
-    <p class="text-lg text-gray-700">Status: <span class="font-semibold ">{{ paymentData.status }}</span></p>
+    <p class="text-lg text-gray-700">Amount: <span class="font-semibold">{{ paymentData.payment_amount }}</span></p>
+    <p class="text-lg text-gray-700">Status: <span class="font-semibold">{{ paymentData.status }}</span></p>
+    <p class="text-lg text-gray-700">Account Number: <span class="font-semibold">{{ userData.account_number }}</span></p>
+    <p class="text-lg text-gray-700">Payment Method: <span class="font-semibold">{{ paymentData.payment_method }}</span></p>
     <p class="text-lg text-gray-700">Date: <span class="font-semibold">{{ paymentData.payment_date }}</span></p>
-    <p class="text-lg text-gray-700">Payment Method: <span class="font-semibold ">{{ paymentData.payment_method}}</span></p>
-    <p class="text-lg text-gray-700">Tax Amount: <span class="font-semibold ">{{ paymentData.tax_amount }}</span></p>
-    <p class="text-lg text-gray-700">Grand Total: <span class="font-semibold ">{{ paymentData.grand_total }}</span></p>
+    <p class="text-lg text-gray-700">Tax Amount: <span class="font-semibold">{{ paymentData.tax_amount }}</span></p>
+    <p class="text-lg text-gray-700">Grand Total: <span class="font-semibold">{{ paymentData.grand_total }}</span></p>
+    <p class="text-lg text-gray-700">Interest Rate: <span class="font-semibold">{{ userData.interest_rate }}%</span></p>
+    <button (click)="exportToPDF()" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 mt-4 mr-4">Export to PDF</button>
+    <button (click)="goHome()" class="bg-green-500 text-white font-bold py-2 px-4 rounded hover:bg-green-700 mt-4">Return to Home</button>
 </div>

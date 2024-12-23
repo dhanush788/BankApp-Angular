@@ -1,7 +1,7 @@
 <div class="max-w-3xl mx-auto p-4 md:m-4 md:border rounded-lg md:shadow-lg bg-white">
     <h3 class="text-xl font-bold">User Details</h3>
     <p *ngIf="userData; else loading" class="text-gray-700 mt-2 mb-6">
-        <strong class="font-bold text-lg">User ID: </strong> <span class="text-blue-500">{{ userData.id }}</span><br>
+        <!-- <strong class="font-bold text-lg">User ID: </strong> <span class="text-blue-500">{{ userData.id }}</span><br> -->
         <strong class="font-bold text-lg">Account Number: </strong> <span class="text-blue-500">{{
             userData.account_number }}</span><br>
         <strong class="font-bold text-lg">Total Loan Amount: </strong> <span class="text-green-500">{{
@@ -10,6 +10,8 @@
             }}%</span><br>
         <strong class="font-bold text-lg">Tenure: </strong> <span class="text-blue-500">{{ userData.tenure }}
             months</span><br>
+        <strong class="font-bold text-lg">EMI due: </strong> <span class="text-blue-500">{{ userData.emi_due }}
+            </span><br>
         <strong class="font-bold text-lg">Months to repay: </strong> <span class="text-blue-500">{{
             userData.months_to_repay }} months</span><br>
         <strong class="font-bold text-lg">Issue Date: </strong> <span class="text-blue-500">{{ userData.issue_date
